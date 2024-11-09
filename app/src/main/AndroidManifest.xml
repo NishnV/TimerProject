@@ -14,34 +14,35 @@
         android:theme="@style/Theme.TimerProject"
         tools:targetApi="31">
 
-    <!-- Splash Screen Activity -->
-    <activity
-        android:name=".FlashScreen"
-        android:exported="true"
-        android:theme="@style/Theme.TimerProject">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+        <!-- Splash Screen Activity -->
+        <activity
+            android:name=".FlashScreen"
+            android:exported="true"
+            android:theme="@style/Theme.TimerProject">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-    <!-- Main Activity -->
-    <activity
-        android:name=".MainActivity"
-        android:exported="true"
-        android:theme="@style/Theme.TimerProject" />
+        <!-- Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TimerProject" />
 
-    <!-- Sound Settings Activity -->
-    <activity
-        android:name=".SoundSettingsActivity"
-        android:exported="true"
-        android:theme="@style/Theme.TimerProject" />
+        <!-- Sound Settings Activity -->
+        <activity
+            android:name=".SoundSettingsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TimerProject" />
 
-    <!-- Timer History Activity -->
-    <activity
-        android:name=".TimerHistoryActivity"
-        android:exported="true"
-        android:theme="@style/Theme.TimerProject" />
-</application>
+        <!-- Timer History Activity -->
+        <activity
+            android:name=".TimerHistoryActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TimerProject" />
 
-    </manifest>
+    </application>
+
+</manifest>

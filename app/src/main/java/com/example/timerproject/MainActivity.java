@@ -14,10 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
     private TextView timerDisplay;
     private EditText inputHours, inputMinutes, inputSeconds;
-    private Button startButton, pauseButton, resetButton, soundSettingsButton;
+    private Button startButton, pauseButton, resetButton, soundSettingsButton, viewHistoryButton;
     private CountDownTimer countDownTimer;
     private boolean isRunning = false;
     private long timeInMillis;
+    private long timeLeftInMillis; // To store remaining time when paused
     private MediaPlayer mediaPlayer;
     private DatabaseHelper databaseHelper;
 
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         pauseButton = findViewById(R.id.pauseButton);
         resetButton = findViewById(R.id.resetButton);
         soundSettingsButton = findViewById(R.id.soundSettingsButton);
+        viewHistoryButton = findViewById(R.id.viewHistoryButton);
 
         // Initialize DatabaseHelper
         databaseHelper = new DatabaseHelper(this);
@@ -61,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, SoundSettingsActivity.class);
             startActivity(intent);
         });
+
+        // View History Button Listener
+        viewHistoryButton.setOnClickListener(v -> {
+            // Launch TimerHistoryActivity to view timer history
+            Intent intent = new Intent(MainActivity.this, TimerHistoryActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void startTimer() {
@@ -70,16 +79,21 @@ public class MainActivity extends AppCompatActivity {
         int minutes = parseInput(inputMinutes.getText().toString());
         int seconds = parseInput(inputSeconds.getText().toString());
 
-        timeInMillis = (hours * 3600 + minutes * 60 + seconds) * 1000;
-        if (timeInMillis == 0) {
-            Toast.makeText(this, "Please enter a valid time", Toast.LENGTH_SHORT).show();
-            return;
+        if (timeLeftInMillis == 0) {
+            timeInMillis = (hours * 3600 + minutes * 60 + seconds) * 1000;
+            if (timeInMillis == 0) {
+                Toast.makeText(this, "Please enter a valid time", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } else {
+            timeInMillis = timeLeftInMillis; // Continue from where we left off
         }
 
         countDownTimer = new CountDownTimer(timeInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 timeInMillis = millisUntilFinished;
+                timeLeftInMillis = millisUntilFinished; // Store remaining time
                 updateTimerDisplay();
             }
 
@@ -92,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
 
                 // Play the selected notification sound
                 playNotificationSound();
+
+                // Save the timer to history
+                saveTimerToHistory();
             }
         }.start();
 
@@ -119,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         }
         isRunning = false;
         timeInMillis = 0;
+        timeLeftInMillis = 0; // Reset the remaining time
         updateTimerDisplay();
         startButton.setVisibility(View.VISIBLE);
         pauseButton.setVisibility(View.GONE);
@@ -157,6 +175,22 @@ public class MainActivity extends AppCompatActivity {
         // Play the selected sound
         mediaPlayer = MediaPlayer.create(this, soundResId);
         mediaPlayer.start();
+    }
+
+    // Save the timer to the history in the database
+    private void saveTimerToHistory() {
+        long endTimeMillis = System.currentTimeMillis();
+
+        // Save the timer duration (formatted as HH:MM:SS) and end time (timestamp in milliseconds)
+        String duration = String.format("%02d:%02d:%02d",
+                (int)(timeInMillis / 3600000),
+                (int)((timeInMillis % 3600000) / 60000),
+                (int)((timeInMillis % 60000) / 1000));
+
+        // Insert the timer record into the database with additional info (e.g., timer type or any other info)
+        databaseHelper.addTimerHistory(duration, String.valueOf(endTimeMillis), "Sample Additional Info");
+
+        Toast.makeText(MainActivity.this, "Timer saved to history", Toast.LENGTH_SHORT).show();
     }
 
     @Override
