@@ -55,7 +55,6 @@ public class SoundSettingsActivity extends AppCompatActivity {
                 String selectedSound = soundOptions[selectedPosition];
                 databaseHelper.saveSelectedSound(selectedSound);
                 Toast.makeText(SoundSettingsActivity.this, "Sound saved: " + selectedSound, Toast.LENGTH_SHORT).show();
-                // Return to MainActivity after saving
                 Intent intent = new Intent(SoundSettingsActivity.this, MainActivity.class);
                 startActivity(intent);
             } else {
