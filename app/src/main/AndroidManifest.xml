@@ -30,6 +30,12 @@
             android:exported="true"
             android:theme="@style/Theme.TimerProject" />
 
+        <!-- Sound Settings Activity -->
+        <activity
+            android:name=".SoundSettingsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TimerProject" />
+
     </application>
 
 </manifest>
